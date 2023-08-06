@@ -5,7 +5,7 @@ We try to detect what product a shopper is looking at in a retail store just usi
 ### GOO: A Dataset for Gaze Object Prediction in Retail Environments:
 * [Paper](https://arxiv.org/abs/2105.10793)
 * [Github](https://github.com/upeee/GOO-GAZE2021/tree/main)
-* [Donwload information](https://github.com/upeee/GOO-GAZE2021/tree/main/dataset)
+* [Download information](https://github.com/upeee/GOO-GAZE2021/tree/main/dataset)
 
 ### An Image is worth a thousand (16x16?) words:
 I think the end goal can be sufficiently explained by ground truth images from the GOO-Real dataset below.
