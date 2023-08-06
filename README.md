@@ -16,6 +16,17 @@ I think the end goal can be sufficiently explained by ground truth images from t
 
 ## Requirements: 
 
+1. torch
+2. torchvision
+3. numpy 
+4. pandas 
+5. cv2
+6. matplotlib 
+7. csv
+8. PIL 
+9. datetime
+10. timm: >= 0.6.13
+
 ## Implementation:
 ### General pipeline:
 
