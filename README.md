@@ -1,14 +1,15 @@
 # Gazed-at-object-prediction-in-retail-environment
-We try to detect what product a shopper is looking at in a retail store just using single-view RGB images from a CCTV viewpoint. In this project, we have implemented Gaze object localization only. After a successful localization, we can directly use BBox of the detected object and pass through a classification pipeline to get the product category. Taking inspiration from the task similarities between single-stage detectors like [CenterNet](https://arxiv.org/abs/1904.07850) and gaze-following; Here we combine both in a single (stage) model.
+We try to detect what product a shopper is looking at in a retail store just using single-view RGB images from a CCTV (3rd person) viewpoint. In this project, we have implemented Gaze object localization only. The assumption is that after a successful localization, we can directly use BBox of the detected object and pass through a classification pipeline to get the product category. Taking inspiration from the task similarities between single-stage detectors like [CenterNet](https://arxiv.org/abs/1904.07850) and gaze-following; Here we combine both in a single (stage) model.
 
 ## Dataset:
+At the time of the implementation, the most relevant dataset for this particular task is the GOO dataset. The dataset contains both real (9,552 samples) and synthetic (192000 samples) images. More details about the dataset can be found below- 
 ### GOO: A Dataset for Gaze Object Prediction in Retail Environments:
 * [Paper](https://arxiv.org/abs/2105.10793)
 * [Github](https://github.com/upeee/GOO-GAZE2021/tree/main)
 * [Download information](https://github.com/upeee/GOO-GAZE2021/tree/main/dataset)
 
 ### An Image is worth a thousand (16x16?) words:
-I think the end goal can be sufficiently explained by ground truth images from the GOO-Real dataset below.
+Below, ground truth images from the GOO-Real dataset can sufficiently explain the end goal. The target product is highlighted in a green BBox with a gaussian heatmap as the gaze localization problem is traditionally solved as a regression problem. 
 <p>
     <img src="https://github.com/Varun-Tandon14/Gazed-at-object-prediction-in-retail-environment/assets/24519234/514c5c83-5100-4da1-a1d3-842aaeca6ee6" height="300" width="400"/>
     <img src="https://github.com/Varun-Tandon14/Gazed-at-object-prediction-in-retail-environment/assets/24519234/50cfa147-6864-4b60-b265-fd5141296978" height="300" width="400"/>
