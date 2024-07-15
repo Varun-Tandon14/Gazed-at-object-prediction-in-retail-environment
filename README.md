@@ -40,7 +40,7 @@ Below, ground truth images from the GOO-Real dataset can sufficiently explain th
 
 ## Results:
 ### Qualitative Results:
-Below are a few images highlighting results obtained where we can visualize (topk = 3) gazed-at-object detection results. The GT image with the gazed-at-object (green) BBoX and gaze heatmap is shown on the left. The prediction results (with red, topk=3 ) BBoX were obtained directly from the TTFNet regression head and predicted gaze heatmap from the baseline gaze detection model output. For sake of completeness, we include both suceess and failure cases below:
+Below are a few images highlighting results obtained where we can visualize (topk = 3) gazed-at-object detection results. The GT image with the gazed-at-object (green) BBoX and gaze heatmap is shown on the left. The prediction results (with red, topk=3 ) BBoX were obtained directly from the TTFNet regression head and predicted gaze heatmap from the baseline gaze detection model output. For the sake of completeness, we include both success and failure cases below:
 
 ![GOP_result_2](https://github.com/user-attachments/assets/1149e681-b29e-49ec-9628-b03226ddbc65)
 ![GOP_result_1](https://github.com/user-attachments/assets/521bda82-85a9-4354-953d-cbb520133326)
@@ -60,6 +60,10 @@ Below are a few images highlighting results obtained where we can visualize (top
 ![GOP_result_3](https://github.com/user-attachments/assets/71fc6066-aa79-4d30-a3d5-8256c765ad5d)
 
 ### Quantitative Results: 
+Coming Soon...
 
-
+## TODO
+1. Add quantitative results.
+2. Add the inference script along with the modality extraction script.
+3. Provide pre-trained weights for the extended model.
 
