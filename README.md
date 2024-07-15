@@ -1,6 +1,9 @@
 # Gazed-at-object-prediction-in-retail-environment
 We try to detect what product a shopper looks at in a retail store using single-view RGB images from a CCTV (3rd person) viewpoint. In this project, we have implemented Gaze object localization only. The assumption is that after a successful localization, we can directly use BBox of the detected object and pass through a classification pipeline to get the product category. Taking inspiration from the task similarities between single-stage detectors like [CenterNet](https://arxiv.org/abs/1904.07850) and gaze-following; Here we combine both in a single (stage) model.
 
+## Baeline Gaze Detection Model:
+The model presented in [A Modular Multimodal Architecture for Gaze Target Prediction: Application to Privacy-Sensitive Settings](https://openaccess.thecvf.com/content/CVPR2022W/GAZE/papers/Gupta_A_Modular_Multimodal_Architecture_for_Gaze_Target_Prediction_Application_to_CVPRW_2022_paper.pdf) by Anshul Gupta, Samy Tafasca and Jean-Marc Odobez. Many thanks to the authors for their awesome work. [GitHub repo](https://github.com/idiap/multimodal_gaze_target_prediction).
+
 ## Dataset:
 At the time of the implementation, the most relevant dataset for this particular task is the GOO dataset. The dataset contains real (9,552 samples) and synthetic (192000 samples) images. More details about the dataset can be found below- 
 ### GOO: A Dataset for Gaze Object Prediction in Retail Environments:
@@ -29,14 +32,15 @@ Below, ground truth images from the GOO-Real dataset can sufficiently explain th
 10. timm: >= 0.6.13
 
 ## Implementation:
-### General pipeline:
 
 ### Design choices:
 1. Instead of using a Gaussian of fixed size ( std = 3 ) as used generally in gaze following tasks we use dynamic size Gaussian (decided by BBox of the GT gazed at object) like in Centernet.
+2. We find that using centerNet regression BBoX sector head and training the model does not work directly out of the box. This can be possible due to the longer training time associated with centerNet. This might present a bottleneck since we do not have a large dataset since we are using GOO Real images only. Instead, we opt to use [TTFNet](https://arxiv.org/pdf/1909.00700), which indeed can be trained in a much shorter time than centerNet.
+3. Some changes were also based on empirical data, such as replacing RELUs with GELUs. 
 
 ## Results:
 ### Qualitative Results:
-Below are a few images highlighting results obtained where we can visualize (topk = 3) gazed-at-object detection results. The GT image with the gazed-at-object (green) BBoX and gaze heatmap is shown on the left. The prediction results (with red, topk=3 ) BBoX obtained directly from the ttfnet head and predicted gaze heatmap from the baseline gaze detection model output. For sake of completeness, we include both suceess and failure cases below:
+Below are a few images highlighting results obtained where we can visualize (topk = 3) gazed-at-object detection results. The GT image with the gazed-at-object (green) BBoX and gaze heatmap is shown on the left. The prediction results (with red, topk=3 ) BBoX were obtained directly from the TTFNet regression head and predicted gaze heatmap from the baseline gaze detection model output. For sake of completeness, we include both suceess and failure cases below:
 
 ![GOP_result_2](https://github.com/user-attachments/assets/1149e681-b29e-49ec-9628-b03226ddbc65)
 ![GOP_result_1](https://github.com/user-attachments/assets/521bda82-85a9-4354-953d-cbb520133326)
@@ -56,3 +60,6 @@ Below are a few images highlighting results obtained where we can visualize (top
 ![GOP_result_3](https://github.com/user-attachments/assets/71fc6066-aa79-4d30-a3d5-8256c765ad5d)
 
 ### Quantitative Results: 
+
+
+
