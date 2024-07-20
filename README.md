@@ -60,15 +60,41 @@ Below are a few images highlighting results obtained where we can visualize (top
 ![GOP_result_3](https://github.com/user-attachments/assets/71fc6066-aa79-4d30-a3d5-8256c765ad5d)
 
 ### Quantitative Results: 
-Coming Soon...
+
+The following results are obtained with these initial configurations:- <br />
+Training Dataset = GOO Real Train
+topk = 1 <br />
+loss function (for baseline model) = l2_loss + dir_loss + att_loss <br />
+loss function ( for extended model) = l2_loss + dir_loss + att_loss + ttfnet_hm_loss + ttfnet_wh_loss <br />
+
+We also calculate the prediction accuracy of the models in two ways: 
+1. energy aggregation accuracy: The predicted BBoX is selected as one where the predicted heatmap has the maximum energy in the GT BBoX. 
+2. BBoX head topk accuracy: Here we predict topk BBoX obtained after processing the results of the BBoX prediction head. In case of topk (n > 1), we perform a simple NMS followed by keeping only BBoX with the score above the threshold score (taken as 0.2 by default). <br />
+The changes wrt. baseline config is specified separately in the table.
+
+Model type | Test Datset  | AUC | Min. Distance (in pixels) | Avg. Angular Distance (in degrees) | Max energy accuracy(in %) | BBoX head topk accuracy (in %)
+| ------------- | ------------- |------------- |------------- |------------- |------------- | ------------- |
+| Baseline | Dense Goo Real | 0.9553 | 0.1160 | 19.0602 | 35.6 | NA
+| Extended | Dense Goo Real | 0.9849 | 0.1115 | 18.9836 | 38 | 33.41
+| Extended | Sparse Goo Real | 0.9870 | 0.1256 | 22.4442 | 36.23 | 30.72
+| Extended [energy] | Dense Goo Real | 0.6280 | 0.1056 | 19.5412 | 43.8 | 34.57 
+| Extended [energy] | Sparse Goo Real | 0.6862 | 0.1205 | 23.5692 | 39.5 | 25.51
+| Extended [topk=3] | Dense Goo Real | 0.9809 | 0.1060 | 20.0947 | 43.97 | 53.28
+
+where Extended [energy] uses the following loss function for the extended model: l2_loss + dir_loss + att_loss + ttfnet_hm_loss + ttfnet_wh_loss + energy_aggregation_loss and  with topk (n>1) considers the case where all of topk BBoX are used for gazed-at-object localization
+
+From the above, results we draw the following conclusions:
+1. Extended model does indeed help in improving the results. So our initial hypothesis of fusing the gaze detection model with SSD detector due to task similarity makes somewhat empirical sense.
+2. It is encouraging to see that there is not a large drop in performance while testing in the sparse setting. While the min. distance and avg. distance increases are expected as the objects are now placed far apart. Comparable accuracy in both modes also proves that our model can inherently focus on useful objects/products in a typical retail scene.
+3. Adding energy aggregation loss leads to an improvement of ~15% in the BBoX pred accuracy with max energy as expected. Counterintuitively, the AUC values decrease by ~36%. This does not make sense in the first look. I conclude that the AUC metric is not an appropriate metric to evaluate the gazed-at-object localization/classification task. Following the trend in literature, it is mentioned here due to its popular position in legacy and (current) gaze following tasks.
+4. The last result with topk = 3 can be slightly misleading as in this we relax our prediction results. This configuration not only would improve our topk accuracy but also increase our false positive rates. Hence just like other object detection tasks, AP and mAP would serve as a more appropriate metrics.
 
 ## Conclusion:
-This work attempts to check whether single-view RGB offers enough information for successful gazed-at-object localization. Since this problem is ill-defined, we expand the information dimensions available by directly starting from a multi-modal solution. Indeed, using pose and (monocular) depth information along with image data helps to solve some of the ambiguity in the task. Thanks to the authors of [A Modular Multimodal Architecture for Gaze Target Prediction: Application to Privacy-Sensitive Settings](https://openaccess.thecvf.com/content/CVPR2022W/GAZE/papers/Gupta_A_Modular_Multimodal_Architecture_for_Gaze_Target_Prediction_Application_to_CVPRW_2022_paper.pdf) for their awesome work that serves as solid foundation to the current attempt. We feel that works like centerNet would serve as a natural extension of this task. The amalgamation of the two models is what is presented in this work. Not fully satisfied with the results, we suggest some possible improvements in the following section. 
+This work attempts to check whether single-view RGB offers enough information for successful gazed-at-object localization. Since this problem is ill-defined, we expand the information dimensions available by directly starting from a multi-modal solution. Indeed, using pose and (monocular) depth information along with image data helps to solve some of the ambiguity in the task. Thanks to the authors of [A Modular Multimodal Architecture for Gaze Target Prediction: Application to Privacy-Sensitive Settings](https://openaccess.thecvf.com/content/CVPR2022W/GAZE/papers/Gupta_A_Modular_Multimodal_Architecture_for_Gaze_Target_Prediction_Application_to_CVPRW_2022_paper.pdf) for their awesome work that serves as solid foundation to the current attempt. We feel that works like centerNet would be a natural extension of this task. The amalgamation of the two models is what is presented in this work. Not fully satisfied with the results, we suggest some possible improvements in the following section. 
 
-In the single-view RGB case, the current model could still be extended to opportunistically use the eye data whenever a person's eyes are not occluded in the current frame. Using the GOO-Synth dataset (which is quite large compared to the GOO-Real dataset) could also help in (pre) training a larger model. To deterministically solve the current problem (I believe), we need to solve the problem in a multi-view setting. This would not only alleviate the ambiguity of the problem definition (and thus make it more well-defined) but also solve some problems like occlusion.  The (gazed-at-object) localization pipeline could then be extended and used for other applications like self-checkout. Here, along with tracking the shopper's head (in 3D), we also track the products throughout the retail store. However, at the time of this work (in the first quarter of 2022) we couldn't find any open-source dataset for the task multi-view gazed-at-object localization (or classification) in the retail setting. Our work in the multi-view stereo setting covered [here](https://github.com/Varun-Tandon14/Implementation-of-Cross-View-Tracking-for-Multi-Human-3D-Pose-Estimation-at-over-100-FPS) was a small attempt to solve the problem in MVS.  
+In the single-view RGB case, the current model could still be extended to opportunistically use the eye data whenever a person's eyes are not occluded in the current frame. Using the GOO-Synth dataset (which is quite large compared to the GOO-Real dataset) could also help in (pre) training a larger model. To deterministically solve the current problem (I believe), we need to solve the problem in a multi-view setting. This would not only alleviate the ambiguity of the problem definition (and thus make it more well-defined) but also solve some issues like occlusion.  The (gazed-at-object) localization pipeline could then be extended and used for other applications like self-checkout. Here, along with tracking the shopper's head (in 3D), we also track the products throughout the retail store. However, at the time of this work (in the first quarter of 2022) we couldn't find any open-source dataset for the task multi-view gazed-at-object localization (or classification) in the retail setting. Our work in the multi-view stereo setting covered [here](https://github.com/Varun-Tandon14/Implementation-of-Cross-View-Tracking-for-Multi-Human-3D-Pose-Estimation-at-over-100-FPS) was a small attempt to solve the problem in MVS.  
 
 ## TODO
-1. Add quantitative results.
-2. Add the inference script along with the modality extraction script.
-3. Provide pre-trained weights for the extended model.
+1. Add the modality extraction script.
+2. Provide pre-trained weights for the extended model.
 
